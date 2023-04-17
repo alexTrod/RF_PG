@@ -64,7 +64,7 @@ def get_keywords():
     # return all keywords from table in database
     with engine.connect() as conn:
         keywords_set = pd.read_sql(
-            '''SELECT
+            '''SELECT TOP (1)
                     dim_SearchQuery.rpg_search_id
                     , dim_SearchQuery.search_query
                     , CASE WHEN fct_JobPostingHistory.rpg_search_id IS NULL THEN 125 ELSE 1 END AS age
