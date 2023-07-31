@@ -191,7 +191,8 @@ def get_create_script(table):
 
 def get_soup(url):
     # get the html conten of a url
-    conn = http.client.HTTPSConnection("api.scrapingant.com")
+    conn = http.client.HTTPSConnection("api.webscrapingapi.com")
+
     try_count = 0
     page_html = ''
     sys.stdout.write(f"[LOG] url to scrape: {url} \n")
@@ -199,19 +200,12 @@ def get_soup(url):
     decoded_url = urllib.parse.unquote_plus(html_decoded_url)
     encoded_url = urllib.parse.quote_plus(decoded_url)
     sys.stdout.write(f"[LOG] Encoded url to scrape: {encoded_url} \n\n")
-    while try_count < 5:
-        conn.request("GET",
-                     f"/v2/general?url={encoded_url}&x-api-key={api_key}&proxy_country=NL&return_page_source=true")
-        res = conn.getresponse()
-        data = res.read()
-        page_html = data.decode("utf-8")
-        if '<!DOCTYPE html>' in page_html:
-            break
-        else:
-            print(encoded_url)
-            print(data.decode("utf-8"))
-            try_count += 1
-            time.sleep(1)
+    conn.request("GET",
+                 f"/v1?url={encoded_url}&api_key={api_key}&device=desktop&proxy_type=datacenter&render_js=1&wait_until=domcontentloaded&wait_for=5000")
+
+    res = conn.getresponse()
+    data = res.read()
+    page_html = data.decode("utf-8")
 
     soup = bs.BeautifulSoup(page_html, features="html.parser")
     return soup
